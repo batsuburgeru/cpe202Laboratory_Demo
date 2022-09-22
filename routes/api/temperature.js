@@ -1,5 +1,5 @@
 var express = require('express');
-
+const jwt = require('jsonwebtoken');
 var router = express.Router();
 
 var dbConn = require('../../config/db.js');
@@ -9,10 +9,17 @@ var dbConn = require('../../config/db.js');
 // @desc Insert Data to Database
 // @access Public/Private
 router.post('/add',(req,res) =>{   
+const token = req.headers.authorization.split(' ')[1];
 
-    // get the input from the user through request (req)
+if (!token){
+  res.status(200).json({success:false,msg:'Error: Token was not found'});
+}
 
-    console.log(req.body);
+const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+
+console.log(decodedToken.data['email']);
+
+    var userEmail = decodedToken.data['email'];
 
     var temperature = req.body.temperature;
 
